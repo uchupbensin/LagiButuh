@@ -1,4 +1,5 @@
 <?php
+echo "Simulasi error"
 // File: modules/auth/login.php
 $pageTitle = "Login - LagiButuh";
 $auth = new Auth();
