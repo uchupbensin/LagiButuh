@@ -1,25 +1,29 @@
-name: PHP + Tailwind CI
+name: Build
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repo
-      uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '18'
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
 
-    - name: Install Tailwind CLI
-      run: npm install --omit=optional
+      - name: Install Tailwind CLI
+        run: npm install --omit=optional
 
-    - name: Build Tailwind CSS
-      run: npx tailwindcss -i ./assets/input.css -o ./assets/output.css
+      - name: Build Tailwind CSS
+        run: npm run build
 
-    - name: Check PHP syntax
-      run: find . -name "*.php" -exec php -l {} \;
+      - name: Check PHP syntax
+        run: |
+          find . -name "*.php" -not -path "./vendor/*" -exec php -l {} \;
