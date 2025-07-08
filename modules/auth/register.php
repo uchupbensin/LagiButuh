@@ -113,7 +113,7 @@ include_once __DIR__ . '/../../templates/header.php';
                     type="text" 
                     id="username" 
                     name="username" 
-                    value="<?= e($oldInput['username']) ?>"
+                    value="<?= htmlspecialchars($oldInput['username']) ?>"
                     class="w-full px-4 py-2 border <?= !empty($errors['username']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                     placeholder="Masukkan username"
                     required
@@ -130,7 +130,7 @@ include_once __DIR__ . '/../../templates/header.php';
                     type="email" 
                     id="email" 
                     name="email" 
-                    value="<?= e($oldInput['email']) ?>"
+                    value="<?= htmlspecialchars($oldInput['email']) ?>"
                     class="w-full px-4 py-2 border <?= !empty($errors['email']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                     placeholder="email@contoh.com"
                     required
