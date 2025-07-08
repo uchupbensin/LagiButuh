@@ -1,0 +1,1 @@
+echo "<?php echo 'PHP is working'; ?>" > test.php

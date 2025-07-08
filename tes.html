@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Peta</title>
+  <style>
+    #map { height: 500px; width: 100%; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  
+  <!-- Gunakan script keyless -->
+  <script src="https://cdn.jsdelivr.net/gh/somanchiu/Keyless-Google-Maps-API@v7.0/mapsJavaScriptAPI.js"></script>
+  <script>
+    function initMap() {
+      new google.maps.Map(document.getElementById("map"), {
+        center: { lat: -6.365, lng: 106.831 },
+        zoom: 12
+      });
+    }
+    setTimeout(() => { 
+      if (typeof google !== 'undefined') initMap(); 
+      else console.error("Gagal load Google Maps");
+    }, 1000);
+  </script>
+</body>
+</html>

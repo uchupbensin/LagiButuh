@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Komponen kustom */
+.btn-primary {
+  @apply bg-primary text-white font-semibold px-4 py-2 rounded-lg hover:bg-primary-dark transition;
+}
