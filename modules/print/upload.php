@@ -45,7 +45,7 @@ include_once __DIR__ . '/../../templates/header.php';
 <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg">
     <h1 class="text-3xl font-bold text-center mb-2">Titip Cetak Dokumen</h1>
     <p class="text-center text-gray-600 mb-8">Butuh cetak tugas mendadak? Unggah file Anda di sini dan biarkan komunitas membantu.</p>
-    
+
     <?php if ($error): ?>
         <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-r-lg" role="alert">
             <p><?php echo $error; ?></p>

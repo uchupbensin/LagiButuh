@@ -76,7 +76,7 @@ $pageKeywords = isset($pageKeywords) ? $pageKeywords : "bantuan darurat, konsult
     <div class="max-w-7xl mx-auto px-4">
       <nav class="flex justify-between items-center py-4">
         <a href="<?= BASE_URL ?>" class="flex items-center space-x-2">
-          <img src="<?= BASE_URL ?>/assets/img/logobaru.png" alt="Logo LagiButuh" class="h-10 w-auto object-contain">
+          <img src="<?= BASE_URL ?>/assets/img/logobaru.png" alt="Logo LagiButuhh" class="h-10 w-auto object-contain">
           <span class="text-2xl font-bold text-primary">LagiButuh</span>
         </a>
         <div class="hidden lg:flex items-center space-x-8">
