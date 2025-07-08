@@ -20,13 +20,15 @@ $pageKeywords = isset($pageKeywords) ? $pageKeywords : "bantuan darurat, konsult
   <meta property="og:url" content="<?= BASE_URL ?>">
   <meta property="og:image" content="<?= BASE_URL ?>/assets/images/lagibutuh-social-preview.jpg">
 
-  <!-- Fonts & Icons -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="<?= BASE_URL ?>/public/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Tailwind -->
+  <!-- ✅ Font Awesome 6.5.2 CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-kWu8RtIjJe1QOe2tq9gY+IqR6vKXBe3RIXNIKN3Y4+UGhG6qZ0jXovN79xNi5SmDZk+OlvNsYIPQxAWG1z+F7A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -51,6 +53,7 @@ $pageKeywords = isset($pageKeywords) ? $pageKeywords : "bantuan darurat, konsult
   </script>
 
   <!-- Custom Style -->
+  <link rel="stylesheet" href="<?= BASE_URL ?>/public/style.css">
   <style>
     .nav-link {
       position: relative;
@@ -63,7 +66,7 @@ $pageKeywords = isset($pageKeywords) ? $pageKeywords : "bantuan darurat, konsult
       height: 2px;
       bottom: -4px;
       left: 0;
-      background-color:rgb(65, 29, 51);
+      background-color: rgb(65, 29, 51);
       transition: width 0.3s ease;
     }
     .nav-link:hover::after {
@@ -86,15 +89,15 @@ $pageKeywords = isset($pageKeywords) ? $pageKeywords : "bantuan darurat, konsult
           <a href="<?= BASE_URL ?>/laptop/list" class="nav-link text-dark hover:text-primary">Pinjam Laptop</a>
           <a href="<?= BASE_URL ?>/jastip/list_orders" class="nav-link text-dark hover:text-primary">Jasa Titip</a>
         </div>
-<div class="flex items-center space-x-4">
-  <?php if ($auth->isLoggedIn()): ?>
-    <a href="<?= BASE_URL ?>/profile" class="text-dark font-medium hover:text-primary">Profil</a>
-    <a href="<?= BASE_URL ?>/logout" class="bg-red-500 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-red-600 active:bg-red-700 shadow transition-colors duration-200">Logout</a>
-  <?php else: ?>
-    <a href="<?= BASE_URL ?>/login" class="text-dark font-medium hover:text-primary">Login</a>
-    <a href="<?= BASE_URL ?>/register" class="bg-primary text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-primary-dark active:bg-primary-dark shadow transition-colors duration-200">Daftar</a>
-  <?php endif; ?>
-</div>
+        <div class="flex items-center space-x-4">
+          <?php if ($auth->isLoggedIn()): ?>
+            <a href="<?= BASE_URL ?>/profile" class="text-dark font-medium hover:text-primary">Profil</a>
+            <a href="<?= BASE_URL ?>/logout" class="bg-red-500 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-red-600 active:bg-red-700 shadow transition-colors duration-200">Logout</a>
+          <?php else: ?>
+            <a href="<?= BASE_URL ?>/login" class="text-dark font-medium hover:text-primary">Login</a>
+            <a href="<?= BASE_URL ?>/register" class="bg-primary text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-primary-dark active:bg-primary-dark shadow transition-colors duration-200">Daftar</a>
+          <?php endif; ?>
+        </div>
       </nav>
     </div>
   </header>
@@ -103,49 +106,50 @@ $pageKeywords = isset($pageKeywords) ? $pageKeywords : "bantuan darurat, konsult
   <main class="max-w-7xl mx-auto px-4 py-8">
 
   <?php if ($auth->isLoggedIn()): ?>
-  <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      function showToast(title, message, link) {
-        const container = document.getElementById('notification-container');
-        const toast = document.createElement('div');
-        toast.className = 'bg-white rounded-xl shadow-lg p-4 transform transition-all duration-300 translate-x-full opacity-0';
-        toast.innerHTML = `
-          <a href="${link}" class="block">
-            <div class="flex items-start">
-              <div class="flex-shrink-0 bg-primary/10 p-2 rounded-full">
-                <i class="fa-solid fa-bell text-primary text-xl"></i>
+    <!-- Pusher Notification Script -->
+    <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        function showToast(title, message, link) {
+          const container = document.getElementById('notification-container');
+          const toast = document.createElement('div');
+          toast.className = 'bg-white rounded-xl shadow-lg p-4 transform transition-all duration-300 translate-x-full opacity-0';
+          toast.innerHTML = `
+            <a href="${link}" class="block">
+              <div class="flex items-start">
+                <div class="flex-shrink-0 bg-primary/10 p-2 rounded-full">
+                  <i class="fa-solid fa-bell text-primary text-xl"></i>
+                </div>
+                <div class="ml-3 w-0 flex-1">
+                  <p class="text-sm font-bold text-dark">${title}</p>
+                  <p class="mt-1 text-sm text-text-muted">${message}</p>
+                </div>
               </div>
-              <div class="ml-3 w-0 flex-1">
-                <p class="text-sm font-bold text-dark">${title}</p>
-                <p class="mt-1 text-sm text-text-muted">${message}</p>
-              </div>
-            </div>
-          </a>
-        `;
-        container.appendChild(toast);
-        setTimeout(() => {
-          toast.classList.remove('translate-x-full', 'opacity-0');
-          toast.classList.add('translate-x-0', 'opacity-100');
-        }, 100);
-        setTimeout(() => {
-          toast.classList.add('opacity-0');
-          toast.addEventListener('transitionend', () => toast.remove());
-        }, 7000);
-      }
-
-      const pusher = new Pusher('<?= PUSHER_APP_KEY ?>', {
-        cluster: '<?= PUSHER_APP_CLUSTER ?>',
-        authEndpoint: '<?= BASE_URL ?>/pusher_auth.php',
-        auth: {
-          headers: { 'X-CSRF-Token': 'some-csrf-token' }
+            </a>
+          `;
+          container.appendChild(toast);
+          setTimeout(() => {
+            toast.classList.remove('translate-x-full', 'opacity-0');
+            toast.classList.add('translate-x-0', 'opacity-100');
+          }, 100);
+          setTimeout(() => {
+            toast.classList.add('opacity-0');
+            toast.addEventListener('transitionend', () => toast.remove());
+          }, 7000);
         }
-      });
 
-      const channel = pusher.subscribe('private-user-<?= $auth->getUserId() ?>');
-      channel.bind('new-notification', function (data) {
-        showToast(data.title, data.message, data.link);
+        const pusher = new Pusher('<?= PUSHER_APP_KEY ?>', {
+          cluster: '<?= PUSHER_APP_CLUSTER ?>',
+          authEndpoint: '<?= BASE_URL ?>/pusher_auth.php',
+          auth: {
+            headers: { 'X-CSRF-Token': 'some-csrf-token' }
+          }
+        });
+
+        const channel = pusher.subscribe('private-user-<?= $auth->getUserId() ?>');
+        channel.bind('new-notification', function (data) {
+          showToast(data.title, data.message, data.link);
+        });
       });
-    });
-  </script>
+    </script>
   <?php endif; ?>
