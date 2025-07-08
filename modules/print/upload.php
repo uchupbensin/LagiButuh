@@ -5,7 +5,7 @@ if (!$auth->isLoggedIn()) {
     redirect(BASE_URL . '/login');
 }
 
-pageTitle = "Titip Cetak Dokumen";
+$pageTitle = "Titip Cetak Dokumen";
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
