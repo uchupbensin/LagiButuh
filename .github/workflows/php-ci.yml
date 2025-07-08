@@ -16,7 +16,7 @@ jobs:
         node-version: '18'
 
     - name: Install Tailwind CLI
-      run: npm install
+      run: npm install --omit=optional
 
     - name: Build Tailwind CSS
       run: npx tailwindcss -i ./assets/input.css -o ./assets/output.css
