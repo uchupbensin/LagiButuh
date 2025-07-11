@@ -28,3 +28,14 @@ jobs:
         run: |
             find . -type f -name "*.php" -exec php -l {} \;
 
+<<<<<<< HEAD
+=======
+    - name: Check PHP syntax
+      run: |
+        ERROR=$(find . -type f -name "*.php" -exec php -l {} \; | grep -i "Errors parsing")
+        if [ -n "$ERROR" ]; then
+          echo "$ERROR"
+          exit 1
+        fi
+
+>>>>>>> 343fe5320e3a69510ce5bb1e593099226eb04073
