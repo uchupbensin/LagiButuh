@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 include_once __DIR__ . '/../../templates/header.php';
 ?>
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <div class="flex items-center justify-center min-h-[calc(100vh-160px)] px-4 py-8">
     <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-lg border border-gray-100">
         <!-- Logo dan Judul -->
