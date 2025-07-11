@@ -1,2 +1,0 @@
-<?php
-echo "Simulasi error"
