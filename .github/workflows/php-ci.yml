@@ -18,5 +18,11 @@ jobs:
       with:
         php-version: '8.1'
 
-    - name: Cek Error Syntax PHP
-      run: find . -type f -name "*.php" -exec php -l {} \;
+    - name: Check PHP syntax
+      run: |
+        ERROR=$(find . -type f -name "*.php" -exec php -l {} \; | grep -i "Errors parsing")
+        if [ -n "$ERROR" ]; then
+          echo "$ERROR"
+          exit 1
+        fi
+
