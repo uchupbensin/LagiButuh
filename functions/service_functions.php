@@ -273,55 +273,107 @@ class Service {
         }
     }
 
-    // --- FUNGSI-FUNGSI TITIP PRINT ---
-    public function createPrintJob($userId, $originalFilePath, $originalFileName, $copies, $notes) {
-        $baseDir = realpath(__DIR__ . '/../../uploads/') . DIRECTORY_SEPARATOR;
-        $encryptedDir = $baseDir . 'documents' . DIRECTORY_SEPARATOR . 'encrypted' . DIRECTORY_SEPARATOR;
-        
-        try {
-            if (!file_exists($baseDir) && !mkdir($baseDir, 0755, true)) {
-                throw new Exception("Failed to create base upload directory");
-            }
-            
-            if (!file_exists($encryptedDir) && !mkdir($encryptedDir, 0755, true)) {
-                throw new Exception("Failed to create encrypted directory");
-            }
-
-            if (!is_writable($baseDir) || !is_writable($encryptedDir)) {
-                throw new Exception("Directory not writable");
-            }
-            
-            $fileExtension = pathinfo($originalFileName, PATHINFO_EXTENSION);
-            $encryptedFileName = hash('sha256', $originalFileName . time()) . '.' . $fileExtension;
-            $encryptedFilePath = $encryptedDir . $encryptedFileName;
-            
-            if (!move_uploaded_file($originalFilePath, $encryptedFilePath)) {
-                throw new Exception("Failed to move file");
-            }
-
-            $stmt = $this->conn->prepare(
-                "INSERT INTO print_jobs (user_id, file_path, file_name_encrypted, copies, notes, status) 
-                VALUES (?, ?, ?, ?, ?, 'pending')"
-            );
-            $stmt->execute([$userId, $originalFileName, $encryptedFileName, $copies, $notes]);
-            
-            return $this->conn->lastInsertId();
-        } catch (Exception $e) {
-            error_log("Print Job Error: " . $e->getMessage());
-            return "Gagal memproses print job. Silakan coba lagi.";
+    // --- FUNGSI-FUNGSI TITIP PRINT (MODEL PAPAN LOWONGAN) ---
+public function createPrintJob($userId, $tmpFilePath, $originalFileName, $copies, $notes, $deliveryMethod, $deliveryAddress, $pickupNotes) {
+    $targetDir = $_SERVER['DOCUMENT_ROOT'] . '/lagibutuh-website/uploads/print_documents/';
+    if (!is_dir($targetDir)) {
+        if (!mkdir($targetDir, 0777, true)) {
+            return "Error: Gagal membuat direktori penyimpanan.";
         }
     }
+    $fileExtension = strtolower(pathinfo($originalFileName, PATHINFO_EXTENSION));
+    $newFileName = 'doc_' . $userId . '_' . time() . '.' . $fileExtension;
+    $targetFile = $targetDir . $newFileName;
 
-    public function getAvailablePrinterProviders() {
-        $stmt = $this->conn->prepare("
-            SELECT id, full_name, profile_picture, email
-            FROM users
-            WHERE role = 'printer_provider'
-            ORDER BY RAND() LIMIT 9
-        ");
-        $stmt->execute();
-        return $stmt->fetchAll();
+    if (move_uploaded_file($tmpFilePath, $targetFile)) {
+        try {
+            // Menambahkan kolom baru ke query INSERT
+            $stmt = $this->conn->prepare(
+                "INSERT INTO print_jobs (user_id, file_path, file_name_encrypted, copies, notes, status, delivery_method, delivery_address, pickup_notes) 
+                VALUES (?, ?, ?, ?, ?, 'open', ?, ?, ?)"
+            );
+            // Menambahkan variabel baru ke execute
+            $stmt->execute([$userId, $newFileName, $originalFileName, $copies, $notes, $deliveryMethod, $deliveryAddress, $pickupNotes]);
+            return $this->conn->lastInsertId();
+        } catch (PDOException $e) {
+            unlink($targetFile);
+            return "Error Database Sebenarnya: " . $e->getMessage();
+        }
+    } else {
+        return "Error: Gagal memindahkan file yang diunggah.";
     }
+}
+
+public function getOpenPrintJobs() {
+    $stmt = $this->conn->prepare("
+        SELECT 
+            pj.id, pj.copies, pj.notes, pj.created_at, 
+            pj.delivery_method, pj.delivery_address, pj.pickup_notes, /* <-- KOLOM BARU DIAMBIL */
+            u.full_name as requester_name, u.profile_picture as requester_picture
+        FROM print_jobs pj
+        JOIN users u ON pj.user_id = u.id
+        WHERE pj.status = 'open'
+        ORDER BY pj.created_at DESC
+    ");
+    $stmt->execute();
+    return $stmt->fetchAll();
+}
+
+public function acceptPrintJob($jobId, $providerId) {
+    // Ambil ID pembuat pekerjaan (requester) untuk ditampilkan di notifikasi
+    $jobStmt = $this->conn->prepare("SELECT user_id FROM print_jobs WHERE id = ?");
+    $jobStmt->execute([$jobId]);
+    $job = $jobStmt->fetch();
+
+    // Jika pekerjaan tidak ditemukan atau pengguna mencoba mengambil pekerjaannya sendiri
+    if (!$job || $job['user_id'] == $providerId) {
+        return false;
+    }
+
+    $requesterId = $job['user_id']; // Simpan ID pembuat pekerjaan
+
+    // Query UPDATE "siapa cepat dia dapat"
+    $sql = "UPDATE print_jobs 
+            SET printer_provider_id = ?, status = 'accepted' 
+            WHERE id = ? AND status = 'open'";
+    
+    $stmt = $this->conn->prepare($sql);
+    
+    try {
+        $stmt->execute([$providerId, $jobId]);
+        
+        // Cek apakah update berhasil
+        if ($stmt->rowCount() > 0) {
+            
+            // --- BAGIAN NOTIFIKASI UNTUK PENGAMBIL PEKERJAAN ---
+            if (class_exists('PusherHelper')) {
+                // Ambil NAMA pembuat pekerjaan (requester) untuk ditampilkan di notifikasi
+                $requester = (new Auth())->getUserById($requesterId);
+                $requesterName = $requester['full_name'] ?? 'seseorang';
+
+                // Kirim notifikasi ke channel pribadi PENGAMBIL pekerjaan (provider)
+                PusherHelper::notify(
+                    'private-user-' . $providerId, // <-- TARGET NOTIFIKASI DIUBAH
+                    'new-notification',
+                    [
+                        'title' => 'Anda Mengambil Pekerjaan Baru!',
+                        'message' => 'Anda berhasil mengambil pekerjaan cetak dari ' . $requesterName . '.',
+                        'link' => BASE_URL . '/print/my_accepted_jobs' // Arahkan ke halaman pekerjaan yang diambil
+                    ]
+                );
+            }
+            // --- BAGIAN NOTIFIKASI SELESAI ---
+            
+            return true; // Berhasil
+        } else {
+            return false; // Gagal (sudah diambil orang lain)
+        }
+
+    } catch (PDOException $e) {
+        error_log("Error accepting print job: " . $e->getMessage());
+        return false;
+    }
+}
 
     public function getPrintJobsByUserId($userId) {
         $stmt = $this->conn->prepare("
@@ -433,7 +485,7 @@ class Service {
             return true;
         } catch (PDOException $e) {
             error_log("Accept Jastip Error: " . $e->getMessage());
-            return "Gagal menerima pesanan. Silakan coba lagi.";
+            return "Gagal menerima pesanan.";
         }
     }
     

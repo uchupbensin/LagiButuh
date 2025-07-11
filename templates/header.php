@@ -10,25 +10,22 @@ $pageKeywords = isset($pageKeywords) ? $pageKeywords : "bantuan darurat, konsult
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?= e($pageTitle) ?></title>
-  <meta name="description" content="<?= e($pageDescription) ?>">
-  <meta name="keywords" content="<?= e($pageKeywords) ?>">
+  <title><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?></title>
+  <meta name="description" content="<?= htmlspecialchars($pageDescription, ENT_QUOTES, 'UTF-8') ?>">
+  <meta name="keywords" content="<?= htmlspecialchars($pageKeywords, ENT_QUOTES, 'UTF-8') ?>">
   <meta name="author" content="LagiButuh Team">
-  <meta property="og:title" content="<?= e($pageTitle) ?>">
-  <meta property="og:description" content="<?= e($pageDescription) ?>">
+  <meta property="og:title" content="<?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?>">
+  <meta property="og:description" content="<?= htmlspecialchars($pageDescription, ENT_QUOTES, 'UTF-8') ?>">
   <meta property="og:type" content="website">
   <meta property="og:url" content="<?= BASE_URL ?>">
   <meta property="og:image" content="<?= BASE_URL ?>/assets/images/lagibutuh-social-preview.jpg">
 
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- ✅ Font Awesome 6.5.2 CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-kWu8RtIjJe1QOe2tq9gY+IqR6vKXBe3RIXNIKN3Y4+UGhG6qZ0jXovN79xNi5SmDZk+OlvNsYIPQxAWG1z+F7A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -36,7 +33,7 @@ $pageKeywords = isset($pageKeywords) ? $pageKeywords : "bantuan darurat, konsult
         extend: {
           colors: {
             primary: '#5C3AC7',
-            'primary-dark': '#3A6EC6',
+            'primary-dark': '#47289f',
             secondary: '#FF9E9E',
             accent: '#7FBC8D',
             light: '#F0F4FA',
@@ -52,12 +49,16 @@ $pageKeywords = isset($pageKeywords) ? $pageKeywords : "bantuan darurat, konsult
     }
   </script>
 
-  <!-- Custom Style -->
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/style.css">
   <style>
     .nav-link {
       position: relative;
       font-weight: 500;
+      color: #1F2937;
+      transition: color 0.3s ease;
+    }
+    .nav-link:hover {
+      color: #5C3AC7;
     }
     .nav-link::after {
       content: '';
@@ -65,8 +66,9 @@ $pageKeywords = isset($pageKeywords) ? $pageKeywords : "bantuan darurat, konsult
       width: 0;
       height: 2px;
       bottom: -4px;
-      left: 0;
-      background-color: rgb(65, 29, 51);
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #5C3AC7;
       transition: width 0.3s ease;
     }
     .nav-link:hover::after {
@@ -82,13 +84,15 @@ $pageKeywords = isset($pageKeywords) ? $pageKeywords : "bantuan darurat, konsult
           <img src="<?= BASE_URL ?>/assets/img/logobaru.png" alt="Logo LagiButuhh" class="h-10 w-auto object-contain">
           <span class="text-2xl font-bold text-primary">LagiButuh</span>
         </a>
+        
         <div class="hidden lg:flex items-center space-x-8">
-          <a href="<?= BASE_URL ?>/psychologist/list" class="nav-link text-dark hover:text-primary">Konsultasi</a>
-          <a href="<?= BASE_URL ?>/nebeng/find_ride" class="nav-link text-dark hover:text-primary">Nebeng</a>
-          <a href="<?= BASE_URL ?>/print/printers" class="nav-link text-dark hover:text-primary">Titip Print</a>
-          <a href="<?= BASE_URL ?>/laptop/list" class="nav-link text-dark hover:text-primary">Pinjam Laptop</a>
-          <a href="<?= BASE_URL ?>/jastip/list_orders" class="nav-link text-dark hover:text-primary">Jasa Titip</a>
+          <a href="<?= BASE_URL ?>/psychologist/list" class="nav-link">Konsultasi</a>
+          <a href="<?= BASE_URL ?>/nebeng/find_ride" class="nav-link">Nebeng</a>
+          <a href="<?= BASE_URL ?>/laptop/list" class="nav-link">Pinjam Laptop</a>
+          <a href="<?= BASE_URL ?>/jastip/list_orders" class="nav-link">Jasa Titip</a>
+          <a href="<?= BASE_URL ?>/print" class="nav-link">Jasa Cetak</a>
         </div>
+        
         <div class="flex items-center space-x-4">
           <?php if ($auth->isLoggedIn()): ?>
             <a href="<?= BASE_URL ?>/profile" class="text-dark font-medium hover:text-primary">Profil</a>
@@ -106,9 +110,11 @@ $pageKeywords = isset($pageKeywords) ? $pageKeywords : "bantuan darurat, konsult
   <main class="max-w-7xl mx-auto px-4 py-8">
 
   <?php if ($auth->isLoggedIn()): ?>
-    <!-- Pusher Notification Script -->
     <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
     <script>
+      const PUSHER_APP_KEY = '<?= defined('PUSHER_APP_KEY') ? PUSHER_APP_KEY : '' ?>';
+      const PUSHER_APP_CLUSTER = '<?= defined('PUSHER_APP_CLUSTER') ? PUSHER_APP_CLUSTER : '' ?>';
+      
       document.addEventListener('DOMContentLoaded', function () {
         function showToast(title, message, link) {
           const container = document.getElementById('notification-container');
@@ -137,19 +143,18 @@ $pageKeywords = isset($pageKeywords) ? $pageKeywords : "bantuan darurat, konsult
             toast.addEventListener('transitionend', () => toast.remove());
           }, 7000);
         }
+        
+        if (PUSHER_APP_KEY) {
+            const pusher = new Pusher(PUSHER_APP_KEY, {
+              cluster: PUSHER_APP_CLUSTER,
+              authEndpoint: '<?= BASE_URL ?>/pusher_auth.php'
+            });
 
-        const pusher = new Pusher('<?= PUSHER_APP_KEY ?>', {
-          cluster: '<?= PUSHER_APP_CLUSTER ?>',
-          authEndpoint: '<?= BASE_URL ?>/pusher_auth.php',
-          auth: {
-            headers: { 'X-CSRF-Token': 'some-csrf-token' }
-          }
-        });
-
-        const channel = pusher.subscribe('private-user-<?= $auth->getUserId() ?>');
-        channel.bind('new-notification', function (data) {
-          showToast(data.title, data.message, data.link);
-        });
+            const channel = pusher.subscribe('private-user-<?= $auth->getUserId() ?>');
+            channel.bind('new-notification', function (data) {
+              showToast(data.title, data.message, data.link);
+            });
+        }
       });
     </script>
   <?php endif; ?>

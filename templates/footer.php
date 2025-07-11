@@ -51,7 +51,7 @@
           </li>
           <li>
             <p class="font-medium mb-1 text-dark">Alamat</p>
-            <p class="text-text-muted leading-relaxed">Jl. Digital No. 123, Kota Bandung, Jawa Barat</p>
+            <p class="text-text-muted leading-relaxed">Jl. Menuju Sugih 7 turunan</p>
           </li>
         </ul>
       </div>
